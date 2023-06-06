@@ -1,7 +1,8 @@
-package com.elka.shopinglist
+package com.elka.shopinglist.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.elka.shopinglist.R
 
 class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
