@@ -1,10 +1,12 @@
 package com.elka.shopinglist.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.elka.shopinglist.domain.ShopItem
 import com.elka.shopinglist.domain.ShopListRepository
 
 object ShopListRepositoryImpl : ShopListRepository {
-  private val items = mutableListOf<ShopItem>()
+  private val items = MutableLiveData<List<ShopItem>>(listOf())
   private var autoIncrementId = 0
 
   init {
@@ -14,12 +16,12 @@ object ShopListRepositoryImpl : ShopListRepository {
     }
   }
 
-  override fun getShopList(): List<ShopItem> {
-    return items.toList()
+  override fun getShopList(): LiveData<List<ShopItem>> {
+    return items
   }
 
   override fun getShopItem(id: Int): ShopItem {
-    return items.firstOrNull { it.id == id }
+    return items.value!!.firstOrNull { it.id == id }
       ?: throw java.lang.RuntimeException("Element with id $id not found")
   }
 
@@ -30,11 +32,16 @@ object ShopListRepositoryImpl : ShopListRepository {
   }
 
   override fun deleteShopItem(item: ShopItem) {
-    items.remove(item)
+    val showItems = items.value!!.toMutableList()
+    showItems.remove(item)
+    items.value = showItems
   }
 
   override fun addShopItem(item: ShopItem) {
     if (item.id == ShopItem.UNDEFINED_ID) item.id = autoIncrementId++
-    items.add(item)
+
+    val showItems = items.value!!.toMutableList()
+    showItems.add(item)
+    items.value = showItems
   }
 }
