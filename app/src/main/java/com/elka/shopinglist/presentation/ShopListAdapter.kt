@@ -1,61 +1,18 @@
 package com.elka.shopinglist.presentation
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.elka.shopinglist.databinding.ItemShopDisabledBinding
 import com.elka.shopinglist.databinding.ItemShopEnabledBinding
 import com.elka.shopinglist.domain.ShopItem
 
-class ShopListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-  private val items = mutableListOf<ShopItem>()
+class ShopListAdapter : ListAdapter<ShopItem, RecyclerView.ViewHolder>(ShopItemDiffCallback()) {
   var onShopItemLongClickListener: (ShopItem) -> Unit = {}
   var onShopItemClickListener: (ShopItem) -> Unit = {}
 
-  inner class EnabledViewHolder(
-    private val binding: ItemShopEnabledBinding,
-    private val onShopItemClickListener: (ShopItem) -> Unit,
-    private val onShopItemLongClickListener: (ShopItem) -> Unit
-  ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: ShopItem) {
-      binding.item = item
-
-      binding.root.setOnClickListener {
-        onShopItemClickListener(item)
-      }
-
-      binding.root.setOnLongClickListener {
-        onShopItemLongClickListener(item)
-        return@setOnLongClickListener true
-      }
-    }
-  }
-
-  inner class DisabledViewHolder(
-    private val binding: ItemShopDisabledBinding,
-    private val onShopItemClickListener: (ShopItem) -> Unit,
-    private val onShopItemLongClickListener: (ShopItem) -> Unit
-  ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: ShopItem) {
-      binding.item = item
-
-      binding.root.setOnClickListener {
-        onShopItemClickListener(item)
-      }
-
-      binding.root.setOnLongClickListener {
-        onShopItemLongClickListener(item)
-        return@setOnLongClickListener true
-      }
-    }
-  }
-
-  private var i = 0
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-    Log.d("Shop_list", i.toString())
-    i++
     return when (viewType) {
       ENABLED_ITEM -> {
         val binding =
@@ -74,17 +31,15 @@ class ShopListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
   }
 
   override fun getItemViewType(position: Int): Int {
-    val item = items[position]
+    val item = getItem(position)
     return when (item.enabled) {
       true -> ENABLED_ITEM
       else -> DISABLED_ITEM
     }
   }
 
-  override fun getItemCount(): Int = items.size
-
   override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-    val item = items[position]
+    val item = getItem(position)
     when (holder) {
       is DisabledViewHolder -> holder.bind(item)
       is EnabledViewHolder -> holder.bind(item)
@@ -92,23 +47,10 @@ class ShopListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
   }
 
-  fun updateItems(newItems: List<ShopItem>) {
-    val callback = ShopListDiffCallback(items, newItems)
-    val diff = DiffUtil.calculateDiff(callback)
-    diff.dispatchUpdatesTo(this)
-    items.clear()
-    items.addAll(newItems)
-  }
-
-  fun getItem(position: Int): ShopItem {
-    return items[position]
-  }
-
   companion object {
     const val ENABLED_ITEM = 1
     const val DISABLED_ITEM = 2
 
     const val MAX_POOL_SIZE = 15
-
   }
 }
