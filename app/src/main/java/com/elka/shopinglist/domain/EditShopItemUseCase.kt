@@ -1,7 +1,7 @@
 package com.elka.shopinglist.domain
 
-class EditShopItemUseCase {
+class EditShopItemUseCase(private val repository: ShopListRepository) {
   fun editShopList(item: ShopItem) {
-    TODO()
+    repository.editShopItem(item)
   }
 }
