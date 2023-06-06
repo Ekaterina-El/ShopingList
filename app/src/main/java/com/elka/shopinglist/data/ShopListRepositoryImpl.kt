@@ -6,7 +6,8 @@ import com.elka.shopinglist.domain.ShopItem
 import com.elka.shopinglist.domain.ShopListRepository
 
 object ShopListRepositoryImpl : ShopListRepository {
-  private val items = MutableLiveData<List<ShopItem>>(listOf())
+  private val shopListLD = MutableLiveData<List<ShopItem>>(listOf())
+  private val shopList = sortedSetOf<ShopItem>({ o1, o2 -> o1.id.compareTo(o2.id)})
   private var autoIncrementId = 0
 
   init {
@@ -16,12 +17,16 @@ object ShopListRepositoryImpl : ShopListRepository {
     }
   }
 
+  private fun updateList() {
+    shopListLD.value = shopList.toList()
+  }
+
   override fun getShopList(): LiveData<List<ShopItem>> {
-    return items
+    return shopListLD
   }
 
   override fun getShopItem(id: Int): ShopItem {
-    return items.value!!.firstOrNull { it.id == id }
+    return shopList.firstOrNull { it.id == id }
       ?: throw java.lang.RuntimeException("Element with id $id not found")
   }
 
@@ -32,16 +37,14 @@ object ShopListRepositoryImpl : ShopListRepository {
   }
 
   override fun deleteShopItem(item: ShopItem) {
-    val showItems = items.value!!.toMutableList()
-    showItems.remove(item)
-    items.value = showItems
+    shopList.remove(item)
+    updateList()
   }
 
   override fun addShopItem(item: ShopItem) {
     if (item.id == ShopItem.UNDEFINED_ID) item.id = autoIncrementId++
 
-    val showItems = items.value!!.toMutableList()
-    showItems.add(item)
-    items.value = showItems
+    shopList.add(item)
+    updateList()
   }
 }

@@ -5,22 +5,28 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.elka.shopinglist.R
+import com.elka.shopinglist.databinding.ActivityMainBinding
+import com.elka.shopinglist.domain.ShopItem
 
 class MainActivity : AppCompatActivity() {
+  private lateinit var binding: ActivityMainBinding
   private lateinit var viewModel: MainViewModel
+  private val adapter: ShopListAdapter by lazy { ShopListAdapter() }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
+    binding = ActivityMainBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
-    var i = 0
     viewModel = ViewModelProvider(this)[MainViewModel::class.java]
     viewModel.shopList.observe(this) {
-      Log.d("SHOP_LIST", it.toString())
-
-      if (i == 3) return@observe
-      viewModel.changeEnableStatus(it[0])
-      i++
+      showShopItems(it)
     }
+
+    binding.rvShopList.adapter = adapter
+  }
+
+  private fun showShopItems(items: List<ShopItem>) {
+    adapter.updateItems(items)
   }
 }
