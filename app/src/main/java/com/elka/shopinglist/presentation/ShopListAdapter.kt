@@ -3,6 +3,7 @@ package com.elka.shopinglist.presentation
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.elka.shopinglist.databinding.ItemShopDisabledBinding
 import com.elka.shopinglist.databinding.ItemShopEnabledBinding
@@ -92,9 +93,11 @@ class ShopListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
   }
 
   fun updateItems(newItems: List<ShopItem>) {
+    val callback = ShopListDiffCallback(items, newItems)
+    val diff = DiffUtil.calculateDiff(callback)
+    diff.dispatchUpdatesTo(this)
     items.clear()
     items.addAll(newItems)
-    notifyDataSetChanged()
   }
 
   fun getItem(position: Int): ShopItem {
