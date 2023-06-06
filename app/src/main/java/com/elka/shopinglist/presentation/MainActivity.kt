@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     )
   }
 
-  private fun setupSwipeListener() {
+  private fun RecyclerView.setupSwipeListener() {
     ItemTouchHelper(object :
       ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
       override fun onMove(
