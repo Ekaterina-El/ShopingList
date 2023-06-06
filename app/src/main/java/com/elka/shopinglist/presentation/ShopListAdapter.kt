@@ -97,6 +97,10 @@ class ShopListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     notifyDataSetChanged()
   }
 
+  fun getItem(position: Int): ShopItem {
+    return items[position]
+  }
+
   companion object {
     const val ENABLED_ITEM = 1
     const val DISABLED_ITEM = 2
