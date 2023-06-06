@@ -13,11 +13,14 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
+    var i = 0
     viewModel = ViewModelProvider(this)[MainViewModel::class.java]
     viewModel.shopList.observe(this) {
       Log.d("SHOP_LIST", it.toString())
-    }
-    viewModel.getShopList()
 
+      if (i == 3) return@observe
+      viewModel.changeEnableStatus(it[0])
+      i++
+    }
   }
 }
