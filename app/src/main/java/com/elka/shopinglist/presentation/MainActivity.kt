@@ -1,10 +1,8 @@
 package com.elka.shopinglist.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.elka.shopinglist.R
 import com.elka.shopinglist.databinding.ActivityMainBinding
 import com.elka.shopinglist.domain.ShopItem
 
@@ -22,8 +20,17 @@ class MainActivity : AppCompatActivity() {
     viewModel.shopList.observe(this) {
       showShopItems(it)
     }
-
-    binding.rvShopList.adapter = adapter
+    with(binding.rvShopList) {
+      adapter = this@MainActivity.adapter
+      recycledViewPool.setMaxRecycledViews(
+        ShopListAdapter.DISABLED_ITEM,
+        ShopListAdapter.MAX_POOL_SIZE
+      )
+      recycledViewPool.setMaxRecycledViews(
+          ShopListAdapter.ENABLED_ITEM,
+          ShopListAdapter.MAX_POOL_SIZE
+        )
+    }
   }
 
   private fun showShopItems(items: List<ShopItem>) {

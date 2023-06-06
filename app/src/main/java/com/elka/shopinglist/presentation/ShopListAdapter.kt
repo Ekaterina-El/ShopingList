@@ -1,5 +1,6 @@
 package com.elka.shopinglist.presentation
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +25,10 @@ class ShopListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
   }
 
+  private var i = 0
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    Log.d("Shop_list", i.toString())
+    i++
     return when(viewType) {
       ENABLED_ITEM -> {
         val binding = ItemShopEnabledBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -68,5 +72,7 @@ class ShopListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
   companion object {
     const val ENABLED_ITEM = 1
     const val DISABLED_ITEM = 2
+
+    const val MAX_POOL_SIZE = 15
   }
 }
