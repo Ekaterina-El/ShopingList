@@ -1,5 +1,6 @@
 package com.elka.shopinglist.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,11 @@ class MainActivity : AppCompatActivity() {
       showShopItems(it)
     }
 
+    binding.buttonAddShopItem.setOnClickListener {
+      val intent = ShopItemActivity.newIntentAddItem(this)
+      startActivity(intent)
+    }
+
     setupRecyclerView()
   }
 
@@ -35,7 +41,6 @@ class MainActivity : AppCompatActivity() {
       setupSwipeListener()
       setupMaxPool()
     }
-
   }
 
   private fun RecyclerView.setupMaxPool() {
@@ -69,7 +74,8 @@ class MainActivity : AppCompatActivity() {
 
   private fun setupClickListener() {
     this@MainActivity.shopListAdapter.onShopItemClickListener = {
-      Toast.makeText(this@MainActivity, "Edit ${it.name}", Toast.LENGTH_SHORT).show()
+      val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+      startActivity(intent)
     }
   }
 
