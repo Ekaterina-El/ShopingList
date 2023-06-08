@@ -12,7 +12,7 @@ object ShopListRepositoryImpl : ShopListRepository {
   private var autoIncrementId = 0
 
   init {
-    for(i in 0 until 500) {
+    for(i in 0 until 3) {
       val item = ShopItem("Name #$i", i, Random.nextBoolean())
       addShopItem(item)
     }
@@ -33,7 +33,7 @@ object ShopListRepositoryImpl : ShopListRepository {
 
   override fun editShopItem(item: ShopItem) {
     val old = getShopItem(item.id)
-    shopList.remove(item)
+    shopList.remove(old)
     addShopItem(item)
   }
 
