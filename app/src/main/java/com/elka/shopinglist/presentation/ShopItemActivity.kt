@@ -19,11 +19,11 @@ class ShopItemActivity : AppCompatActivity() {
   }
 
   private val errorNameObserver = Observer<Boolean> {
-    binding.tilName.error = if (it) "Обязательное поле" else ""
+    //binding.tilName.error = if (it) "Обязательное поле" else ""
   }
 
   private val errorCountObserver = Observer<Boolean> {
-    binding.tilCount.error = if (it) "Обязательное поле" else ""
+    //binding.tilCount.error = if (it) "Обязательное поле" else ""
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
