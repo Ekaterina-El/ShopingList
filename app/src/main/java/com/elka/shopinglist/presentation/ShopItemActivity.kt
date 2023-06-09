@@ -7,24 +7,12 @@ import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.elka.shopinglist.R
 import com.elka.shopinglist.databinding.ActivityShopItemBinding
+import com.elka.shopinglist.domain.ShopItem
 
 class ShopItemActivity : AppCompatActivity() {
   private lateinit var binding: ActivityShopItemBinding
-  private val shopItemViewModel by lazy { ViewModelProvider(this)[ShopItemViewModel::class.java] }
-
-  private val shouldCloseActivityObserver = Observer<Boolean> {
-    if (!it) return@Observer
-    finish()
-  }
-
-  private val errorNameObserver = Observer<Boolean> {
-    //binding.tilName.error = if (it) "Обязательное поле" else ""
-  }
-
-  private val errorCountObserver = Observer<Boolean> {
-    //binding.tilCount.error = if (it) "Обязательное поле" else ""
-  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -32,26 +20,24 @@ class ShopItemActivity : AppCompatActivity() {
 
     binding.apply {
       lifecycleOwner = this@ShopItemActivity
-      viewModel = shopItemViewModel
-      master = this@ShopItemActivity
     }
     setContentView(binding.root)
-
-    when (intent.getStringExtra(EXTRA_SCREEN_MODE)) {
-      ADD_MODE -> Unit
-      EDIT_MODE -> {
-        val id = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, 0)
-        shopItemViewModel.getShopItem(id)
-      }
-    }
-
-    shopItemViewModel.shouldCloseActivity.observe(this, shouldCloseActivityObserver)
-    shopItemViewModel.errorInputName.observe(this, errorNameObserver)
-    shopItemViewModel.errorInputCount.observe(this, errorCountObserver)
+    parseIntent()
   }
 
-  fun save() {
-    shopItemViewModel.saveShopItem()
+  private fun parseIntent() {
+    val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)!!
+    val id = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
+
+    val fragment = when (intent.getStringExtra(EXTRA_SCREEN_MODE)) {
+      ADD_MODE -> ShopItemFragment.newInstanceAddItem()
+      EDIT_MODE -> ShopItemFragment.newInstanceEditItem(id)
+      else -> throw java.lang.Exception("Unknown mode")
+    }
+
+    supportFragmentManager.beginTransaction()
+      .add(R.id.shop_item_container, fragment)
+      .commit()
   }
 
   companion object {
