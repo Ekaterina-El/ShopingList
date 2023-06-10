@@ -10,7 +10,7 @@ import com.elka.shopinglist.domain.ShopItem
 import com.elka.shopinglist.presentation.ShopItemFragment.Companion.SCREEN_MODE
 import com.elka.shopinglist.presentation.ShopItemFragment.Companion.SHOP_ITEM_ID
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFinishedListener {
   private lateinit var binding: ActivityShopItemBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,5 +55,9 @@ class ShopItemActivity : AppCompatActivity() {
       intent.putExtra(SHOP_ITEM_ID, shopItemId)
       return intent
     }
+  }
+
+  override fun onEditingFinished() {
+    onBackPressed()
   }
 }

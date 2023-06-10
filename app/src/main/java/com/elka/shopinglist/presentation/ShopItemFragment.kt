@@ -1,5 +1,6 @@
 package com.elka.shopinglist.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,8 @@ class ShopItemFragment : Fragment() {
   private lateinit var binding: FragmentShopItemBinding
   private val shopItemViewModel by lazy { ViewModelProvider(this)[ShopItemViewModel::class.java] }
 
+  private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
   private var screenMode: String = ADD_MODE
   private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
@@ -29,6 +32,12 @@ class ShopItemFragment : Fragment() {
 
   private val errorCountObserver = Observer<Boolean> {
     binding.tilCount.error = if (it) "Обязательное поле" else ""
+  }
+
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    if (context is OnEditingFinishedListener) onEditingFinishedListener = context
+    else throw RuntimeException("Activity is not implemented OnEditingFinishedListener")
   }
 
 
@@ -87,6 +96,10 @@ class ShopItemFragment : Fragment() {
     const val SHOP_ITEM_ID = "extra_shop_item_id"
     private const val EDIT_MODE = "edit_item"
     private const val ADD_MODE = "add_item"
+
+    interface OnEditingFinishedListener {
+      fun onEditingFinished()
+    }
 
     fun newInstanceAddItem(): ShopItemFragment {
       return ShopItemFragment().apply {
