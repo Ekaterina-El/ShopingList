@@ -23,7 +23,7 @@ class ShopItemFragment : Fragment() {
 
   private val shouldCloseActivityObserver = Observer<Boolean> {
     if (!it) return@Observer
-    activity?.onBackPressed()
+    onEditingFinishedListener.onEditingFinished()
   }
 
   private val errorNameObserver = Observer<Boolean> {
@@ -50,7 +50,6 @@ class ShopItemFragment : Fragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    Log.d("ShopItemFragment", "OnCreate")
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

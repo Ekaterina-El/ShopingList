@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.elka.shopinglist.databinding.ActivityMainBinding
 import com.elka.shopinglist.domain.ShopItem
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFinishedListener {
   private lateinit var binding: ActivityMainBinding
   private lateinit var viewModel: MainViewModel
   private val shopListAdapter: ShopListAdapter by lazy { ShopListAdapter() }
@@ -117,5 +117,9 @@ class MainActivity : AppCompatActivity() {
 
   private fun showShopItems(items: List<ShopItem>) {
     shopListAdapter.submitList(items)
+  }
+
+  override fun onEditingFinished() {
+    supportFragmentManager.popBackStack()
   }
 }
