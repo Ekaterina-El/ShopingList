@@ -21,7 +21,7 @@ class ShopItemActivity : AppCompatActivity() {
       lifecycleOwner = this@ShopItemActivity
     }
     setContentView(binding.root)
-    parseIntent()
+    if (savedInstanceState == null) parseIntent()
   }
 
   private fun parseIntent() {
@@ -35,7 +35,7 @@ class ShopItemActivity : AppCompatActivity() {
     }
 
     supportFragmentManager.beginTransaction()
-      .add(R.id.shop_item_container, fragment)
+      .replace(R.id.shop_item_container, fragment)
       .commit()
   }
 

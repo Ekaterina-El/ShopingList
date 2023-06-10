@@ -1,6 +1,7 @@
 package com.elka.shopinglist.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +37,11 @@ class ShopItemFragment : Fragment() {
   ): View {
     binding = FragmentShopItemBinding.inflate(layoutInflater, container, false)
     return binding.root
+  }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    Log.d("ShopItemFragment", "OnCreate")
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
