@@ -10,13 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.elka.shopinglist.databinding.FragmentShopItemBinding
 import com.elka.shopinglist.domain.ShopItem
 
-class ShopItemFragment(
-  private val screenMode: String = ADD_MODE,
-  private val shopItemId: Int = ShopItem.UNDEFINED_ID
-) : Fragment() {
+class ShopItemFragment : Fragment() {
   private lateinit var binding: FragmentShopItemBinding
   private val shopItemViewModel by lazy { ViewModelProvider(this)[ShopItemViewModel::class.java] }
 
+  private var screenMode: String = ADD_MODE
+  private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
   private val shouldCloseActivityObserver = Observer<Boolean> {
     if (!it) return@Observer
@@ -33,9 +32,7 @@ class ShopItemFragment(
 
 
   override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
+    inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {
     binding = FragmentShopItemBinding.inflate(layoutInflater, container, false)
     return binding.root
@@ -50,7 +47,15 @@ class ShopItemFragment(
       master = this@ShopItemFragment
     }
 
+    parseArguments()
     if (shopItemId != ShopItem.UNDEFINED_ID) shopItemViewModel.getShopItem(shopItemId)
+  }
+
+  private fun parseArguments() {
+    requireArguments().apply {
+      screenMode = getString(SCREEN_MODE) ?: ADD_MODE
+      shopItemId = getInt(SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
+    }
   }
 
   override fun onResume() {
@@ -72,10 +77,26 @@ class ShopItemFragment(
   }
 
   companion object {
+    const val SCREEN_MODE = "extra_screen_mode"
+    const val SHOP_ITEM_ID = "extra_shop_item_id"
     private const val EDIT_MODE = "edit_item"
     private const val ADD_MODE = "add_item"
 
-    fun newInstanceAddItem() = ShopItemFragment(ADD_MODE)
-    fun newInstanceEditItem(id: Int) = ShopItemFragment(EDIT_MODE, id)
+    fun newInstanceAddItem(): ShopItemFragment {
+      return ShopItemFragment().apply {
+        arguments = Bundle().apply {
+          putString(SCREEN_MODE, ADD_MODE)
+        }
+      }
+    }
+
+    fun newInstanceEditItem(id: Int): ShopItemFragment {
+      return ShopItemFragment().apply {
+        arguments = Bundle().apply {
+          putString(SCREEN_MODE, EDIT_MODE)
+          putInt(SHOP_ITEM_ID, id)
+        }
+      }
+    }
   }
 }
