@@ -1,16 +1,23 @@
 package com.elka.shopinglist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.elka.shopinglist.data.ShopListRepositoryImpl
 import com.elka.shopinglist.domain.AddShopItemUseCase
 import com.elka.shopinglist.domain.EditShopItemUseCase
 import com.elka.shopinglist.domain.GetShopItemUseCase
 import com.elka.shopinglist.domain.ShopItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
-class ShopItemViewModel : ViewModel() {
-  private val rep = ShopListRepositoryImpl
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
+  private val rep = ShopListRepositoryImpl(application)
+
   private val getShopItemUseCase = GetShopItemUseCase(rep)
   private val addShopItemUseCase = AddShopItemUseCase(rep)
   private val editShopItemUseCase = EditShopItemUseCase(rep)
@@ -30,12 +37,15 @@ class ShopItemViewModel : ViewModel() {
   val shouldCloseActivity: LiveData<Boolean>
     get() = _shouldCloseActivity
 
+  private var currentShopItem: ShopItem? = null
+
   fun getShopItem(shopItemId: Int) {
-    val item = getShopItemUseCase.getShopItem(shopItemId)
-    setItem(item)
+    viewModelScope.launch {
+      val item = getShopItemUseCase.getShopItem(shopItemId)
+      setItem(item)
+    }
   }
 
-  private var currentShopItem: ShopItem? = null
 
   private fun setItem(item: ShopItem?) {
     currentShopItem = item
@@ -54,12 +64,16 @@ class ShopItemViewModel : ViewModel() {
   }
 
   private fun addShopItem(name: String, count: Int) {
-    addShopItemUseCase.addShopItem(ShopItem(name, count, true))
+    viewModelScope.launch {
+      addShopItemUseCase.addShopItem(ShopItem(name, count, true))
+    }
   }
 
   private fun editShopItem(name: String, count: Int) {
-    val shopItem = currentShopItem!!.copy(name = name, count = count)
-    editShopItemUseCase.editShopList(shopItem)
+    viewModelScope.launch {
+      val shopItem = currentShopItem!!.copy(name = name, count = count)
+      editShopItemUseCase.editShopList(shopItem)
+    }
   }
 
   private fun finishWork() {

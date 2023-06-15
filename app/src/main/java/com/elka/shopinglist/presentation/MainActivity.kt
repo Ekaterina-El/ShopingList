@@ -1,24 +1,27 @@
 package com.elka.shopinglist.presentation
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.elka.shopinglist.databinding.ActivityMainBinding
 import com.elka.shopinglist.domain.ShopItem
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFinishedListener {
   private lateinit var binding: ActivityMainBinding
   private lateinit var viewModel: MainViewModel
   private val shopListAdapter: ShopListAdapter by lazy { ShopListAdapter() }
+
+  private var shopItemContainer: FragmentContainerView? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     binding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
+
+    shopItemContainer = binding.shopItemContainer
 
     viewModel = ViewModelProvider(this)[MainViewModel::class.java]
     viewModel.shopList.observe(this) {
@@ -26,11 +29,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     binding.buttonAddShopItem.setOnClickListener {
-      val intent = ShopItemActivity.newIntentAddItem(this)
-      startActivity(intent)
+      openAddShopItem()
     }
 
     setupRecyclerView()
+  }
+
+  private fun openAddShopItem() {
+    if (shopItemContainer == null) {
+      val intent = ShopItemActivity.newIntentAddItem(this)
+      startActivity(intent)
+    } else {
+      val fragment = ShopItemFragment.newInstanceAddItem()
+      setFragmentToShopItemContainer(fragment)
+    }
+  }
+
+  private fun openEditShopItem(id: Int) {
+    if (shopItemContainer == null) {
+      val intent = ShopItemActivity.newIntentEditItem(this, id)
+      startActivity(intent)
+    } else {
+      val fragment = ShopItemFragment.newInstanceEditItem(id)
+      setFragmentToShopItemContainer(fragment)
+    }
+  }
+
+  private fun setFragmentToShopItemContainer(fragment: ShopItemFragment) {
+    supportFragmentManager.popBackStack()
+
+    supportFragmentManager.beginTransaction()
+      .replace(shopItemContainer!!.id, fragment)
+      .addToBackStack(null)
+      .commit()
   }
 
   private fun setupRecyclerView() {
@@ -74,8 +105,7 @@ class MainActivity : AppCompatActivity() {
 
   private fun setupClickListener() {
     this@MainActivity.shopListAdapter.onShopItemClickListener = {
-      val intent = ShopItemActivity.newIntentEditItem(this, it.id)
-      startActivity(intent)
+      openEditShopItem(it.id)
     }
   }
 
@@ -87,5 +117,9 @@ class MainActivity : AppCompatActivity() {
 
   private fun showShopItems(items: List<ShopItem>) {
     shopListAdapter.submitList(items)
+  }
+
+  override fun onEditingFinished() {
+    supportFragmentManager.popBackStack()
   }
 }
