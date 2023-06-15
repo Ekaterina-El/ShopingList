@@ -16,19 +16,19 @@ class ShopListRepositoryImpl(application: Application) : ShopListRepository {
     return shopListDao.getShopList().map { mapper.mapListDbModelsToEntity(it) }
   }
 
-  override fun getShopItem(id: Int): ShopItem {
+  override suspend fun getShopItem(id: Int): ShopItem {
     return mapper.mapDbModelToEntity(shopListDao.getShopItemById(id))
   }
 
-  override fun editShopItem(item: ShopItem) {
+  override suspend fun editShopItem(item: ShopItem) {
     addShopItem(item)
   }
 
-  override fun deleteShopItem(item: ShopItem) {
+  override suspend fun deleteShopItem(item: ShopItem) {
     shopListDao.deleteShopItem(item.id)
   }
 
-  override fun addShopItem(item: ShopItem) {
+  override suspend fun addShopItem(item: ShopItem) {
     shopListDao.addShopItem(mapper.mapEntityToDbModel(item))
   }
 }
