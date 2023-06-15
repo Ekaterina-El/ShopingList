@@ -1,15 +1,15 @@
 package com.elka.shopinglist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.elka.shopinglist.data.ShopListRepositoryImpl
-import com.elka.shopinglist.domain.DeleteShopItemUseCase
-import com.elka.shopinglist.domain.EditShopItemUseCase
-import com.elka.shopinglist.domain.GetShopListUseCase
-import com.elka.shopinglist.domain.ShopItem
+import com.elka.shopinglist.domain.*
 
-class MainViewModel: ViewModel() {
-  private val repository = ShopListRepositoryImpl
+class MainViewModel(application: Application) : AndroidViewModel(application) {
+
+  private val repository = ShopListRepositoryImpl(application)
   private val getShopListUseCase = GetShopListUseCase(repository)
   private val deleteShopItemUseCase = DeleteShopItemUseCase(repository)
   private val editShopItemUseCase = EditShopItemUseCase(repository)

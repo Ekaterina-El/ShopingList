@@ -1,5 +1,7 @@
 package com.elka.shopinglist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,8 +11,9 @@ import com.elka.shopinglist.domain.EditShopItemUseCase
 import com.elka.shopinglist.domain.GetShopItemUseCase
 import com.elka.shopinglist.domain.ShopItem
 
-class ShopItemViewModel : ViewModel() {
-  private val rep = ShopListRepositoryImpl
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
+  private val rep = ShopListRepositoryImpl(application)
+
   private val getShopItemUseCase = GetShopItemUseCase(rep)
   private val addShopItemUseCase = AddShopItemUseCase(rep)
   private val editShopItemUseCase = EditShopItemUseCase(rep)
