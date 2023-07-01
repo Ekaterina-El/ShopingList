@@ -1,16 +1,14 @@
 package com.elka.shopinglist.data
 
-import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.map
 import com.elka.shopinglist.domain.ShopItem
 import com.elka.shopinglist.domain.ShopListRepository
-import kotlin.random.Random
+import javax.inject.Inject
 
-class ShopListRepositoryImpl(application: Application) : ShopListRepository {
-  private val shopListDao = AppDatabase.getInstance(application).shopListDao()
-  private val mapper = ShopListMapper()
+class ShopListRepositoryImpl @Inject constructor(
+  private val shopListDao: ShopListDao, private val mapper: ShopListMapper
+) : ShopListRepository {
 
   override fun getShopList(): LiveData<List<ShopItem>> {
     return shopListDao.getShopList().map { mapper.mapListDbModelsToEntity(it) }

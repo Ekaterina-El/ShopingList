@@ -1,6 +1,7 @@
 package com.elka.shopinglist.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
@@ -8,12 +9,22 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.elka.shopinglist.databinding.ActivityMainBinding
 import com.elka.shopinglist.domain.ShopItem
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFinishedListener {
   private lateinit var binding: ActivityMainBinding
-  private lateinit var viewModel: MainViewModel
-  private val shopListAdapter: ShopListAdapter by lazy { ShopListAdapter() }
 
+  private val component by lazy {
+    (application as ShopListApplication).component.activityComponentFactory().create()
+  }
+
+  @Inject
+  lateinit var viewModelFactory: ViewModelFactory
+  private val viewModel by lazy {
+    ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+  }
+
+  private val shopListAdapter: ShopListAdapter by lazy { ShopListAdapter() }
   private var shopItemContainer: FragmentContainerView? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,9 +32,13 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFi
     binding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    shopItemContainer = binding.shopItemContainer
+    component.inject(this)
+    Log.d("Dagger2_TEST", viewModel.toString())
+    addListeners()
+    setupRecyclerView()
+  }
 
-    viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+  private fun addListeners() {
     viewModel.shopList.observe(this) {
       showShopItems(it)
     }
@@ -31,8 +46,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFi
     binding.buttonAddShopItem.setOnClickListener {
       openAddShopItem()
     }
-
-    setupRecyclerView()
   }
 
   private fun openAddShopItem() {
@@ -65,6 +78,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFi
   }
 
   private fun setupRecyclerView() {
+    shopItemContainer = binding.shopItemContainer
     with(binding.rvShopList) {
       adapter = this@MainActivity.shopListAdapter
       setupLongClickListener()

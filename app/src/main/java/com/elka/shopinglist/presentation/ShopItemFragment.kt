@@ -11,10 +11,23 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.elka.shopinglist.databinding.FragmentShopItemBinding
 import com.elka.shopinglist.domain.ShopItem
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
   private lateinit var binding: FragmentShopItemBinding
-  private val shopItemViewModel by lazy { ViewModelProvider(this)[ShopItemViewModel::class.java] }
+
+  private val component by lazy {
+    (requireActivity().application as ShopListApplication).component.activityComponentFactory()
+      .create()
+  }
+
+  @Inject
+  lateinit var viewModelFactory: ViewModelFactory
+  private val shopItemViewModel by lazy {
+    ViewModelProvider(
+      this, viewModelFactory
+    )[ShopItemViewModel::class.java]
+  }
 
   private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
@@ -40,16 +53,18 @@ class ShopItemFragment : Fragment() {
     else throw RuntimeException("Activity is not implemented OnEditingFinishedListener")
   }
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    component.inject(this)
+    Log.d("Dagger2_TEST", shopItemViewModel.toString())
+
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {
     binding = FragmentShopItemBinding.inflate(layoutInflater, container, false)
     return binding.root
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
