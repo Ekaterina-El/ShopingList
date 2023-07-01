@@ -1,8 +1,9 @@
 package com.elka.shopinglist.data
 
 import com.elka.shopinglist.domain.ShopItem
+import javax.inject.Inject
 
-class ShopListMapper {
+class ShopListMapper @Inject constructor() {
   fun mapEntityToDbModel(shopItem: ShopItem) = ShopItemDbModel(
     id = shopItem.id,
     name = shopItem.name,

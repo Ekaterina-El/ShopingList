@@ -1,27 +1,21 @@
 package com.elka.shopinglist.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.elka.shopinglist.data.ShopListRepositoryImpl
 import com.elka.shopinglist.domain.AddShopItemUseCase
 import com.elka.shopinglist.domain.EditShopItemUseCase
 import com.elka.shopinglist.domain.GetShopItemUseCase
 import com.elka.shopinglist.domain.ShopItem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
-  private val rep = ShopListRepositoryImpl(application)
-
-  private val getShopItemUseCase = GetShopItemUseCase(rep)
-  private val addShopItemUseCase = AddShopItemUseCase(rep)
-  private val editShopItemUseCase = EditShopItemUseCase(rep)
-
+class ShopItemViewModel @Inject constructor(
+  private val getShopItemUseCase: GetShopItemUseCase,
+  private val addShopItemUseCase: AddShopItemUseCase,
+  private val editShopItemUseCase: EditShopItemUseCase
+) : ViewModel() {
   val name = MutableLiveData<String>()
   val count = MutableLiveData<String>()
 
