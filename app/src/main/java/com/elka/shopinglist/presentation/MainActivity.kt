@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFi
     setupRecyclerView()
 
     val data = contentResolver.query(
-      Uri.parse("content://com.elka.shopinglist/shop_items"),
+      Uri.parse("content://com.elka.shopinglist/shop_items/10"),
       null, null, null, null, null
     )
   }
