@@ -1,5 +1,6 @@
 package com.elka.shopinglist.presentation
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -33,9 +34,13 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFi
     setContentView(binding.root)
 
     component.inject(this)
-    Log.d("Dagger2_TEST", viewModel.toString())
     addListeners()
     setupRecyclerView()
+
+    val data = contentResolver.query(
+      Uri.parse("content://com.elka.shopinglist/shop_items"),
+      null, null, null, null, null
+    )
   }
 
   private fun addListeners() {

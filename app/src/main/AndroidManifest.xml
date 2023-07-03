@@ -23,6 +23,11 @@
       </intent-filter>
     </activity>
     <activity android:name="com.elka.shopinglist.presentation.ShopItemActivity" />
+
+    <provider
+        android:authorities="com.elka.shopinglist"
+        android:name=".data.ShoppingListProvider"
+      android:exported="false" />
   </application>
 
 </manifest>
