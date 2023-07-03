@@ -1,5 +1,6 @@
 package com.elka.shopinglist.presentation
 
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.elka.shopinglist.databinding.ActivityMainBinding
 import com.elka.shopinglist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFinishedListener {
   private lateinit var binding: ActivityMainBinding
@@ -37,10 +39,28 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFi
     addListeners()
     setupRecyclerView()
 
-    val data = contentResolver.query(
-      Uri.parse("content://com.elka.shopinglist/shop_items/10"),
-      null, null, null, null, null
-    )
+    thread {
+      val data: Cursor? = contentResolver.query(
+        Uri.parse("content://com.elka.shopinglist/shop_items"), null, null, null, null, null
+      )
+
+      if (data != null) {
+        Log.d("MainActivity", data.count.toString())
+
+        if (data.moveToFirst()) {
+          do {
+            val id = data.getInt(data.getColumnIndexOrThrow("id"))
+            val name = data.getString(data.getColumnIndexOrThrow("name"))
+            val count = data.getInt(data.getColumnIndexOrThrow("count"))
+            val enabled = data.getInt(data.getColumnIndexOrThrow("enabled")) > 0
+            val shopItem = ShopItem(name, count, enabled, id = id)
+            Log.d("MainActivityData", "$shopItem")
+          } while (data.moveToNext())
+        }
+
+        data.close()
+      }
+    }
   }
 
   private fun addListeners() {
@@ -76,10 +96,8 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFi
   private fun setFragmentToShopItemContainer(fragment: ShopItemFragment) {
     supportFragmentManager.popBackStack()
 
-    supportFragmentManager.beginTransaction()
-      .replace(shopItemContainer!!.id, fragment)
-      .addToBackStack(null)
-      .commit()
+    supportFragmentManager.beginTransaction().replace(shopItemContainer!!.id, fragment)
+      .addToBackStack(null).commit()
   }
 
   private fun setupRecyclerView() {
