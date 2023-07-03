@@ -1,6 +1,8 @@
 package com.elka.shopinglist.presentation
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.elka.shopinglist.databinding.FragmentShopItemBinding
 import com.elka.shopinglist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemFragment : Fragment() {
   private lateinit var binding: FragmentShopItemBinding
@@ -102,7 +105,17 @@ class ShopItemFragment : Fragment() {
   }
 
   fun save() {
-    shopItemViewModel.saveShopItem()
+    thread {
+      val value = ContentValues().apply {
+        this.put("id", 0)
+        this.put("name", shopItemViewModel.name.value)
+        this.put("count", shopItemViewModel.count.value!!.toInt())
+        this.put("enabled", true)
+      }
+      requireActivity().contentResolver.insert(Uri.parse("content://com.elka.shopinglist/shop_items"), value)
+    }
+
+//    shopItemViewModel.saveShopItem()
   }
 
   companion object {
