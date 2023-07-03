@@ -1,6 +1,5 @@
 package com.elka.shopinglist.presentation
 
-import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -135,7 +134,14 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.Companion.OnEditingFi
       override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val position = viewHolder.adapterPosition
         val item = shopListAdapter.currentList[position]
-        viewModel.deleteShopItem(item)
+        thread {
+          contentResolver.delete(
+            Uri.parse("content://com.elka.shopinglist/shop_items"),
+            "",
+            arrayOf(item.id.toString())
+          )
+        }
+        //viewModel.deleteShopItem(item)
       }
 
     }).attachToRecyclerView(this)

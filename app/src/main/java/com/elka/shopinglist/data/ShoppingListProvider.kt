@@ -30,11 +30,7 @@ class ShoppingListProvider : ContentProvider() {
   }
 
   override fun query(
-    uri: Uri,
-    p1: Array<out String>?,
-    p2: String?,
-    p3: Array<out String>?,
-    p4: String?
+    uri: Uri, p1: Array<out String>?, p2: String?, p3: Array<out String>?, p4: String?
   ): Cursor? {
     return when (uriMatcher.match(uri)) {
       SHOP_ITEMS_QUERY_CODE -> {
@@ -64,8 +60,11 @@ class ShoppingListProvider : ContentProvider() {
     return null
   }
 
-  override fun delete(p0: Uri, p1: String?, p2: Array<out String>?): Int {
-    TODO("Not yet implemented")
+  override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
+    when (uriMatcher.match(uri)) {
+      SHOP_ITEMS_QUERY_CODE -> shopListDao.deleteShopItemSync(selectionArgs!![0].toInt())
+    }
+    return 0
   }
 
   override fun update(p0: Uri, p1: ContentValues?, p2: String?, p3: Array<out String>?): Int {
